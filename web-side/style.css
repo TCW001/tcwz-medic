@@ -1,0 +1,720 @@
+body {
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Centraliza o container horizontalmente */
+    align-items: center; /* Centraliza o container verticalmente */
+    height: 100vh; /* Faz o body ocupar toda a altura da tela */
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Largura do painel */
+    max-width: 1200px; /* Define um limite máximo de largura para evitar que o painel fique muito pequeno */
+    height: 100%; /* Ajusta a altura automaticamente conforme o conteúdo */
+    max-height: 700px;
+    background-color: rgb(19, 19, 19);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Sombra suave */
+    font-family: sans-serif;
+    overflow: hidden; /* Impede que o conteúdo saia do painel */
+}
+
+.top-bar {
+    display: flex; /* Flexbox para alinhar os itens */
+    justify-content: space-between; /* Distribui o espaço entre os itens: um à esquerda e o outro à direita */
+    align-items: center; /* Alinha verticalmente os itens */
+    padding-bottom: 10px;
+    width: 100%; /* Garante que a barra tenha 100% de largura */
+}
+
+.logo-container {
+    display: flex; /* Flexbox para alinhar os itens */
+    align-items: center; /* Alinha verticalmente os itens */
+}
+
+.logo {
+    height: 80px; /* Ajusta o tamanho da imagem */
+    width: auto; /* Mantém a proporção da imagem */
+}
+
+.logo-text {
+    font-size: 38px; /* Tamanho da fonte */
+    color: white; /* Cor do texto */
+    font-weight: bold; /* Fonte em negrito */
+}
+
+
+.btn-fechar {
+    background-color: #ff4d4d; /* Cor de fundo (vermelho claro) */
+    color: white; /* Cor da fonte */
+    border: none; /* Sem borda */
+    padding: 10px 20px; /* Espaçamento interno */
+    border-radius: 8px; /* Cantos arredondados */
+    cursor: pointer; /* Mãozinha ao passar o mouse */
+    font-size: 16px; /* Tamanho da fonte */
+    font-weight: bold; /* Fonte em negrito */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animação suave */
+}
+
+.btn-fechar:hover {
+    background-color: #ff1a1a; /* Muda o fundo no hover */
+    transform: scale(1.05); /* Dá uma leve aumentada */
+}
+
+.main-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-right: 2px solid #2c2c2c;
+}
+
+.sidebar button {
+    background: none;
+    border: none;
+    color: #bbb;
+    padding: 15px 20px;
+    text-align: left;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+    color: #fff;
+    position: relative;
+    overflow-y: auto; /* Ativa o scroll vertical quando necessário */
+    scrollbar-width: thin;           /* Firefox: scroll fino */
+    scrollbar-color: #ccc transparent; /* Firefox: cor da barra e do fundo */
+}
+/* Chrome, Edge e Safari */
+.content::-webkit-scrollbar {
+    width: 6px; /* Largura fina */
+}
+
+.content::-webkit-scrollbar-track {
+    background: transparent; /* Fundo invisível */
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Cor da barrinha */
+    border-radius: 10px; /* Cantos arredondados */
+    border: none; /* Sem borda */
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    background-color: #999; /* Um pouco mais escura no hover */
+}
+
+.content h2 {
+    color: #0d6efd; /* Cor do título */
+}
+
+.content-box {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.content-box span{
+    color: #0d6efd; 
+}
+
+.content-box.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e1e1e;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+    color: #fff;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    background-color: #0d6efd;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background: #2c2c2c;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background: #0d6efd;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #0b5ed7;
+}
+
+.btn-confirmar {
+    background-color: #28a745; /* Cor de fundo verde */
+    color: white; /* Cor da fonte */
+    border: none; /* Sem borda */
+}
+
+/* Hover do botão Confirmar */
+.btn-confirmar:hover {
+    background-color: #218838; /* Cor mais escura de verde no hover */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+/* Estilo para o botão Recusar */
+.btn-recusar {
+    background-color: #dc3545; /* Cor de fundo vermelho */
+    color: white; /* Cor da fonte */
+    border: none; /* Sem borda */
+}
+
+/* Hover do botão Recusar */
+.btn-recusar:hover {
+    background-color: #c82333; /* Cor mais escura de vermelho no hover */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+/* Estilo para o botão Reagendar */
+.btn-reagendar {
+    background-color: #ffc107; /* Cor de fundo amarela */
+    color: white; /* Cor da fonte */
+    border: none; /* Sem borda */
+}
+
+/* Hover do botão Reagendar */
+.btn-reagendar:hover {
+    background-color: #e0a800; /* Cor mais escura de amarelo no hover */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 20px;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #3a3a3a;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.dropdown-content div {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-content div:hover {
+    background-color: #0b5ed7;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background: #2c2c2c;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+ul li:hover {
+    background: #1e1e1e;
+}
+
+.content p span {
+    color: #0d6efd;
+}
+
+#dataInput {
+    padding-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    color: white;
+    font-size: 16px;
+  }
+
+#dataInput::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+#horaInput {
+    padding-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    color: white;
+    font-size: 16px;
+}
+
+#horaInput::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+#medic {
+    display: none;
+}
+
+#staff {
+    display: none;
+}
+
+#checkID {
+    display: none;
+}
+
+/* Tabela Geral para Pedidos de Consulta e Histórico */
+#pedidosConsulta, #historicoConsulta {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #f4f4f4;
+}
+
+#pedidosConsulta th, #historicoConsulta th, #pedidosConsulta td, #historicoConsulta td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+#pedidosConsulta th, #historicoConsulta th {
+    background-color: #343a40;
+    color: white;
+}
+
+#pedidosConsulta td, #historicoConsulta td {
+    background-color: #fff;
+}
+
+#pedidosConsulta tr:nth-child(even), #historicoConsulta tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Painel Emitir Laudo ATIVO */
+#emitirLaudo.active {
+    background: linear-gradient(to bottom right, #003366, #0057b8);
+    position: relative;
+    color: #000;
+    padding: 60px 40px;
+}
+
+/* Efeito de "onda branca" no meio */
+#emitirLaudo.active::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: white;
+    border-top-left-radius: 50% 10%;
+    border-top-right-radius: 50% 10%;
+    z-index: 0;
+    transform: translateY(20%);
+}
+
+/* Logo cus no canto superior direito */
+#emitirLaudo.active::before {
+    content: "";
+    background: url('images/logo_cus.png') no-repeat center;
+    background-size: 180px; /* Tamanho da logo */
+    position: absolute; /* Usando absolute para controle mais flexível */
+    top: 80px; /* Distância do topo */
+    right: 80px; /* Distância da direita */
+    width: 180px; /* Largura da logo */
+    height: 180px; /* Altura da logo */
+    z-index: 999; /* Garante que a logo fique em cima de outros elementos */
+}
+
+/* Conteúdo do formulário em cima da curva branca */
+#emitirLaudo.active .form-box {
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Inputs, selects, labels */
+#emitirLaudo.active input,
+#emitirLaudo.active select,
+#emitirLaudo.active textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #f5f5f5;
+    color: #000;
+}
+
+#emitirLaudo.active label {
+    font-weight: 1000;
+    margin-bottom: 5px;
+    display: block;
+}
+
+#emitirLaudo.active h2 {
+    margin-bottom: 15px;
+    color: #003366;
+}
+
+/* Centraliza os elementos dentro dessa laudo-section específica */
+.laudo-section.centered {
+    text-align: center;
+}
+
+/* Centraliza o input */
+.laudo-section.centered input {
+    display: block;
+    margin: 10px auto; /* Centraliza horizontalmente */
+    width: 60%; /* Ou outro valor, conforme o tamanho desejado */
+}
+
+/* Estilo específico para o label "Exame" e o select ao lado */
+#emitirLaudo.active .laudo-section:first-child {
+    display: flex;
+    align-items: center; /* Alinha os itens verticalmente no centro */
+    margin-bottom: 20px;
+}
+
+/* Estilo específico para o label "Exame" */
+#emitirLaudo.active label[for="exame"] {
+    margin-right: 30px; /* Espaço entre o label e o select */
+    width: 120px; /* Largura do label */
+    text-align: right; /* Alinha o texto do label à direita */
+    font-size: 50px;
+    padding:50px;
+}
+
+/* Estilo específico para o select "Exame" */
+#emitirLaudo.active #exame {
+    width: 250px; /* Largura do select */
+    padding: 8px; /* Espessura do padding */
+    font-size: 30px; /* Tamanho da fonte */
+}
+
+/* Linha flexível para inputs lado a lado */
+.laudo-row {
+    display: flex;
+    gap: 20px; /* Espaço entre os campos */
+    margin-bottom: 20px;
+}
+
+/* Grupo label + input */
+.input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Linha com texto + input lado a lado */
+.laudo-linha {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espaço entre texto e input */
+    margin-top: 10px;
+    flex-wrap: wrap; /* Garante responsividade em telas pequenas */
+}
+
+/* Texto ao lado do input */
+.laudo-texto {
+    font-weight: 600;
+    font-size: 16px;
+    color: #003366;
+    white-space: nowrap; /* Evita quebra de linha */
+}
+
+/* Input com tamanho fixo ou ajustável */
+.laudo-linha input {
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    width: 250px; /* Ajuste conforme necessário */
+}
+
+.input-duplo {
+    display: flex;
+    gap: 10px; /* Espaço entre os inputs */
+    margin-bottom: 20px;
+}
+
+.input-duplo input {
+    flex: 1; /* Faz os inputs dividirem o espaço igualmente */
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background: #f5f5f5;
+}
+
+.botoes-final {
+    display: flex;
+    justify-content: left; /* Ou flex-end para alinhar à direita */
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.botoes-final button {
+    padding: 12px 20px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo do botão "Enviar" */
+.btn-enviar {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.btn-enviar:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo do botão "Cancelar" */
+.btn-cancelar {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn-cancelar:hover {
+    background-color: #999;
+}
+
+/* ===== Estilo Geral do Conteúdo de Laudo ===== */
+#laudo {
+    background: linear-gradient(to bottom right, #003366, #0057b8);
+    position: relative;
+    color: #000;
+    padding: 60px 40px;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Onda branca decorativa */
+#laudo::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: white;
+    border-top-left-radius: 50% 10%;
+    border-top-right-radius: 50% 10%;
+    z-index: 0;
+    transform: translateY(20%);
+}
+
+/* Logo no topo direito */
+#laudo::before {
+    content: "";
+    background: url('images/logo_cus.png') no-repeat center;
+    background-size: 180px;
+    position: absolute;
+    top: 80px;
+    right: 80px;
+    width: 180px;
+    height: 180px;
+    z-index: 999;
+}
+
+/* Caixa do formulário/laudo */
+#laudo .form-box {
+    position: relative;
+    z-index: 1;
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 80px;
+}
+
+/* Títulos de seção */
+#laudo h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #003366;
+    margin-bottom: 10px;
+}
+
+/* Subtítulos ou campos dinâmicos */
+#laudo h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* Parágrafos */
+#laudo p {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* Seções do laudo */
+.laudo-section {
+    margin-bottom: 25px;
+}
+
+/* Seções centralizadas */
+.laudo-section.centered {
+    text-align: center;
+}
+
+/* Linha de resultado */
+.laudo-linha-horizontal {
+    border-top: 2px solid #003366;
+    padding-top: 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* Grid de inputs duplos */
+.input-duplo {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* Grid horizontal */
+.laudo-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+/* Agrupamento de campo */
+.input-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    #laudo {
+        padding: 40px 20px;
+    }
+
+    #laudo::before {
+        top: 40px;
+        right: 40px;
+        background-size: 120px;
+        width: 120px;
+        height: 120px;
+    }
+
+    #laudo .form-box {
+        padding: 30px 20px;
+    }
+
+    .input-duplo,
+    .laudo-row {
+        flex-direction: column;
+    }
+}
