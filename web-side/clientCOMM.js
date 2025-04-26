@@ -183,168 +183,8 @@ window.addEventListener('message', function(event) {
 
     if (event.data.action === "receiveLaudosAnalise") {
         laudosAnalise = event.data.analiseLaudos || [];
-
-        if (laudosAnalise.length >= 1) {
-            const aLaudosDiv = document.getElementById('a-laudos');
-            aLaudosDiv.innerHTML = '';
-        
-            const h2 = document.createElement('h2');
-            h2.textContent = 'Laudos Análise';
-        
-            const h3 = document.createElement('h3');
-            h3.innerHTML = `Tem um total de <span class="aLaudos">${laudosAnalise.length}</span> Laudos para Analisar.`;
-        
-            aLaudosDiv.appendChild(h2);
-            aLaudosDiv.appendChild(h3);
-        
-            const tabela = document.createElement('table');
-            tabela.style.width = '100%';
-            tabela.style.borderCollapse = 'collapse';
-        
-            const thead = document.createElement('thead');
-            const cabecalho = document.createElement('tr');
-        
-            const th1 = document.createElement('th');
-            th1.textContent = 'ID';
-            const th2 = document.createElement('th');
-            th2.textContent = 'Registro';
-            const th3 = document.createElement('th');
-            th3.textContent = 'Status';
-            const th4 = document.createElement('th');
-            th4.textContent = 'Tipo';
-            const th5 = document.createElement('th');
-            th5.textContent = 'Data de Emissão';
-            const th6 = document.createElement('th');
-            th6.textContent = 'Documento';
-            const th7 = document.createElement('th');
-            th7.textContent = 'Ação';
-        
-            cabecalho.appendChild(th1);
-            cabecalho.appendChild(th2);
-            cabecalho.appendChild(th3);
-            cabecalho.appendChild(th4);
-            cabecalho.appendChild(th5);
-            cabecalho.appendChild(th6);
-            cabecalho.appendChild(th7);
-            thead.appendChild(cabecalho);
-            tabela.appendChild(thead);
-        
-            const tbody = document.createElement('tbody');
-        
-            laudosAnalise.forEach(laudo => {
-                const tr = document.createElement('tr');
-                tr.id = `row-${laudo.register_id}`; // ID único para a linha
-        
-                const td1 = document.createElement('td');
-                td1.textContent = laudo.user_id;
-        
-                const td2 = document.createElement('td');
-                td2.textContent = laudo.register_id;
-        
-                const td3 = document.createElement('td');
-                td3.textContent = laudo.status;
-        
-                const td4 = document.createElement('td');
-                td4.textContent = laudo.type;
-        
-                const td5 = document.createElement('td');
-                td5.textContent = laudo.date;
-        
-                const td6 = document.createElement('td');
-                const btnVerDocumento = document.createElement('button');
-                btnVerDocumento.classList.add('btn-ver-laudo');
-                btnVerDocumento.textContent = 'Ver Documento';
-                btnVerDocumento.style.padding = '5px 10px';
-                btnVerDocumento.style.backgroundColor = '#007BFF';
-                btnVerDocumento.style.borderRadius = '5px';
-                btnVerDocumento.style.fontSize = '14px';
-                btnVerDocumento.addEventListener('click', function() {
-                    showContent('ver-laudo', btnVerDocumento); // Passando o botão como argumento para a função
-                    const register_id = laudo.register_id; // Pega o register_id do laudo atual
-                    verLaudo(register_id); // Chama a função para exibir o laudo
-                });
-                td6.appendChild(btnVerDocumento);
-        
-                const td7 = document.createElement('td');
-                const btnAprovar = document.createElement('button');
-                btnAprovar.textContent = 'Aprovar';
-                btnAprovar.style.padding = '5px 10px';
-                btnAprovar.style.backgroundColor = '#28a745';
-                btnAprovar.style.borderRadius = '5px';
-                btnAprovar.style.fontSize = '14px';
-                btnAprovar.style.marginRight = '10px';
-        
-                const btnRecusar = document.createElement('button');
-                btnRecusar.textContent = 'Recusar';
-                btnRecusar.style.padding = '5px 10px';
-                btnRecusar.style.backgroundColor = '#dc3545';
-                btnRecusar.style.borderRadius = '5px';
-                btnRecusar.style.fontSize = '14px';
-        
-                td7.appendChild(btnAprovar);
-                td7.appendChild(btnRecusar);
-        
-                // Ação de Aprovar (remove a linha imediatamente)
-                btnAprovar.addEventListener('click', function() {
-                    showNotification('success', 'Laudo Aprovado.');
-                    const laudoRow = document.querySelector(`#row-${laudo.register_id}`);
-                    if (laudoRow) {
-                        laudoRow.remove();
-                    }
-        
-                    // Fazer o fetch para aprovar
-                    fetch(`https://${GetParentResourceName()}/tcwz_medic:aprovarLaudo`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            laudo: {
-                                register_id: laudo.register_id,
-                                user_id: laudo.user_id
-                            }
-                        })
-                    }).catch(error => {
-                        console.error("Erro ao aprovar laudo:", error);
-                    });
-                });
-        
-                // Ação de Recusar (remove a linha imediatamente)
-                btnRecusar.addEventListener('click', function() {
-                    showNotification('error', 'Laudo Recusado.');
-                    const laudoRow = document.querySelector(`#row-${laudo.register_id}`);
-                    if (laudoRow) {
-                        laudoRow.remove();
-                    }
-        
-                    // Fazer o fetch para recusar
-                    fetch(`https://${GetParentResourceName()}/tcwz_medic:revogarLaudo`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            laudo: {
-                                register_id: laudo.register_id,
-                                user_id: laudo.user_id
-                            }
-                        })
-                    }).catch(error => {
-                        console.error("Erro ao recusar laudo:", error);
-                    });
-                });
-        
-                // Monta a linha
-                tr.appendChild(td1);
-                tr.appendChild(td2);
-                tr.appendChild(td3);
-                tr.appendChild(td4);
-                tr.appendChild(td5);
-                tr.appendChild(td6);
-                tr.appendChild(td7);
-        
-                tbody.appendChild(tr);
-            });
-        
-            tabela.appendChild(tbody);
-            aLaudosDiv.appendChild(tabela);
-        }        
+        console.log("laudos:", event.data.analiseLaudos.length);
+        atualizarLaudosAnalise();
     }
 
     if (event.data.action === "newConsulta") {
@@ -434,10 +274,24 @@ window.addEventListener('message', function(event) {
         document.querySelector(".paciente-sobrenome").value = "";
         document.querySelector(".paciente-id").value = "";
         document.querySelector(".paciente-contato").value = "";
+        document.getElementById("aut-idade").value = "";
         document.getElementById("aut-diagnostico").value = "";
         document.getElementById("aut-caracteristicas").value = "";
         document.getElementById("aut-identificacao").value = "";
         document.getElementById("aut-parecer").value = "";
+        document.querySelector(".date").value = "";
+        document.querySelector(".assinaturam").value = "";
+    } else if(event.data.laudoData === "psicologico") {
+        showNotification('success', 'Laudo enviado para análise.');
+        document.querySelector(".paciente-nome").value = "";
+        document.querySelector(".paciente-sobrenome").value = "";
+        document.querySelector(".paciente-id").value = "";
+        document.querySelector(".paciente-contato").value = "";
+        document.getElementById("psi-idade").value = "";
+        document.getElementById("psi-hist_clinico").value = "";
+        document.getElementById("psi-avaliacao").value = "";
+        document.getElementById("psi-recom_tratamento").value = "";
+        document.getElementById("psi-parecer").value = "";
         document.querySelector(".date").value = "";
         document.querySelector(".assinaturam").value = "";
     } else if (event.data.laudoData === "incorreto") {
@@ -450,36 +304,38 @@ window.addEventListener('message', function(event) {
 
     if (event.data.action === "resultCheckID") {
         laudosTID = event.data.laudos || [];
+        console.log("check id", laudosTID);
         const resultDiv = document.getElementById('resultado-check');
-        resultDiv.innerHTML = ''; // limpa tudo antes de montar
+        resultDiv.innerHTML = ''; // Limpa o conteúdo anterior
+    
+        // Caso não haja identidade no passaporte
         if (!event.data.identity || event.data.identity.length === 0) {
-            const aviso = document.createElement("p");
-            aviso.textContent = "Este passaporte não Existe.";
-            resultDiv.appendChild(aviso);
+            resultDiv.appendChild(criarElemento('p', 'Este passaporte não Existe.'));
             showNotification('error', 'Passaporte inválido.');
             return;
         }
-        // Cria e adiciona informações básicas (sempre visíveis)
+    
+        // Cria e exibe informações básicas (nome, passaporte, telefone)
         const info = document.createElement("div");
         info.innerHTML = `
             <h2>Resultado da Busca</h2>
-            <p><strong>Nome:</strong> ${event.data.identity?.name || "Desconhecido"} ${event.data.identity?.name2 || ""}</p>
-            <p><strong>Passaporte:</strong> ${event.data.id || "N/A"}</p>
-            <p><strong>Telefone:</strong> ${event.data.identity?.phone || "N/A"}</p>
+            <h3>Nome: <span>${event.data.identity?.name || "Desconhecido"} ${event.data.identity?.name2 || ""}</span></h3>
+            <h3>Passaporte: <span>${event.data.id || "N/A"}</span></h3>
+            <h3>Telefone: <span>${event.data.identity?.phone || "N/A"}</span></h3>
         `;
         resultDiv.appendChild(info);
     
-        // Só monta a tabela se houver laudos
-        if (!laudosTID || laudosTID.length === 0) {
-            const aviso = document.createElement("p");
-            aviso.textContent = "Este Passaporte não contém Laudos.";
-            resultDiv.appendChild(aviso);
+        // Se não houver laudos, exibe mensagem de erro e para a execução
+        if (laudosTID.length === 0) {
+            resultDiv.appendChild(criarElemento('p', 'Este Passaporte não contém Laudos.'));
             showNotification('info', 'Este Passaporte não contém Laudos.');
             return;
         }
-        
+    
+        // Notificação de sucesso
         showNotification('success', 'Busca realizada.');
-        // Continuação: gerar tabela
+    
+        // Criação da tabela
         const tabela = document.createElement("table");
         tabela.style.width = "100%";
         tabela.style.marginTop = "15px";
@@ -489,67 +345,58 @@ window.addEventListener('message', function(event) {
         const headers = ["ID", "Registro", "Status", "Tipo", "Data", "Documento"];
         if (permissao === "Diretor") headers.push("Ação");
     
-        headers.forEach(t => {
+        headers.forEach(texto => {
             const th = document.createElement("th");
-            th.textContent = t;
+            th.textContent = texto;
             row.appendChild(th);
         });
     
         const tbody = tabela.createTBody();
         laudosTID.forEach(laudo => {
             const tr = tbody.insertRow();
-            tr.insertCell().textContent = laudo.user_id;
-            tr.insertCell().textContent = laudo.register_id;
-            tr.insertCell().textContent = laudo.status;
-            tr.insertCell().textContent = laudo.type;
-            tr.insertCell().textContent = laudo.date;
     
+            // Popula a linha com os dados do laudo
+            ["user_id", "register_id", "status", "type", "date"].forEach(field => {
+                tr.insertCell().textContent = laudo[field];
+                console.log(laudo.type);
+            });
+    
+            // Coluna "Documento"
             const tdDocumento = tr.insertCell();
-            const btnVerDocumento = document.createElement('button');
-            btnVerDocumento.classList.add('btn-ver-laudo');
-            btnVerDocumento.textContent = 'Ver Documento';
-            btnVerDocumento.style.padding = '5px 10px';
-            btnVerDocumento.style.backgroundColor = '#007BFF';
-            btnVerDocumento.style.borderRadius = '5px';
-            btnVerDocumento.style.fontSize = '14px';
-    
-            btnVerDocumento.addEventListener('click', () => {
+            const btnVerDocumento = criarBotao('Ver Documento', '#007BFF', () => {
                 showContent('ver-laudo', btnVerDocumento);
                 verLaudo(laudo.register_id);
             });
-    
             tdDocumento.appendChild(btnVerDocumento);
     
+            // Ação de revogar (apenas se for Diretor)
             if (permissao === "Diretor") {
                 const tdAcao = tr.insertCell();
-                const btnRevogar = document.createElement('button');
-                btnRevogar.textContent = 'Revogar Laudo';
-                btnRevogar.style.padding = '5px 10px';
-                btnRevogar.style.backgroundColor = '#dc3545';
-                btnRevogar.style.borderRadius = '5px';
-                btnRevogar.style.fontSize = '14px';
-                btnRevogar.style.color = '#fff';
-    
-                btnRevogar.addEventListener('click', () => {
+                const btnRevogar = criarBotao('Revogar Laudo', '#dc3545', () => {
                     fetch(`https://${GetParentResourceName()}/tcwz_medic:revogarLaudo`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             laudo: {
                                 register_id: laudo.register_id,
-                                user_id: laudo.user_id
+                                user_id: laudo.user_id,
+                                type: laudo.type
                             }
                         })
-                    });
-                    showNotification('error', 'Laudo Revogado.');
-                    tr.remove();
+                    }).then(() => {
+                        showNotification('error', 'Laudo Revogado.');
+                        tr.remove();
+                    }).catch(err => console.error("Erro ao revogar laudo:", err));
                 });
-    
                 tdAcao.appendChild(btnRevogar);
             }
+    
+            // Adiciona a linha à tabela
+            tbody.appendChild(tr);
         });
+    
         resultDiv.appendChild(tabela);
-    }      
+    }          
 
     if (event.data.action === "statusConsulta") {
         console.log(event.data.status);
@@ -646,7 +493,15 @@ window.addEventListener('message', function(event) {
             container.style.display = "none";
             showNotification('info', 'Você apagou o Teste.');
         });
-    }    
+    }
+
+    if (event.data.action === "delPedido") {
+        const div = document.querySelector('.consulta-pedido');
+        console.log(event.data.action);
+        if (div) {
+            div.remove();
+        }
+    }
 });
 //---------------------------------------------------//
 // FECHAR PAINEL                                     //
@@ -691,7 +546,7 @@ document.querySelector("#s-consulta form").addEventListener("submit", (e) => {
 
         form.reset();
     } else {
-        alert("Preencha todos os campos!");
+        showNotification('warning', 'Preencha Todos os Campos!');
     }
 })
 //---------------------------------------------------//
@@ -701,177 +556,151 @@ function handleLaudoChange(tipo) {
     const container = document.getElementById('laudo-container');
     container.innerHTML = '';
 
-    if (tipo === 'psicotecnico') {
-        container.innerHTML = `
-            <div class="laudo-documento">
-                <h2>Laudo Psicotécnico</h2>
-    
-                <label>Nome do Avaliado:</label>
-                <div class="linha">
-                    <div class="input-box"><input type="text" class="paciente-nome" placeholder="Nome"></div>
-                    <div class="input-box"><input type="text" class="paciente-sobrenome" placeholder="Sobrenome"></div>
-                </div>
-    
-                <div class="linha">
-                    <div class="input-box">
-                        <label>Passaporte:</label>
-                        <input type="text" class="paciente-id" placeholder="Ex: 111">
-                    </div>
-                    <div class="input-box">
-                        <label>Contato:</label>
-                        <input type="text" class="paciente-contato" placeholder="xxx-xxx">
-                    </div>
-                </div>
-    
-                <div class="linha">
-                    <div class="input-box">
-                        <label for="idade">Idade:</label>
-                        <input type="text" id="idade" placeholder="Ex: 21">
-                    </div>
-                    <div class="input-box">
-                        <label for="profissao">Profissão:</label>
-                        <input type="text" id="profissao" placeholder="Ex: Coronel Dos Bombeiros">
-                    </div>
-                </div>
-    
-                <label for="avaliacao">Avaliação Psicológica:</label>
-                <textarea id="avaliacao" placeholder="Descreva aqui os detalhes da avaliação..."></textarea>
-    
-                <label for="resultado">Laudo conclui que o paciente está:</label>
-                <input type="text" id="resultado" placeholder="Resultado da avaliação">
-    
-                <p class="assinatura">
-                    A PRESENTE AVALIAÇÃO É INTRANSFERÍVEL. O MESMO SEGUE EM OBSERVAÇÃO.
-                </p>
-    
-                <label for="data">Data da Avaliação:</label>
-                <input type="text" id="data" class="date" placeholder="DD/MM/AAAA" maxlength="10">
-    
-                <label for="ccm">Psicólogo(a) Responsável:</label>
-                <input type="text" class="assinaturam" placeholder="Primeiro e Último Nome">
-    
-                <p class="assinatura">ASSINATURA MÉDICO(A) RESPONSÁVEL</p>
-    
-                <div class="botoes-final">
-                    <button class="btn-enviar" id="btn-enviar">Enviar para Análise</button>
-                    <button class="btn-cancelar" id="btn-cancelar">Cancelar</button>
-                </div>
-            </div>
-        `;
-    
-        setTimeout(() => {
-            document.getElementById("btn-enviar").addEventListener("click", () => {
-                const data = {
-                    tipo: "psicotecnico",
-                    nome: document.querySelector(".paciente-nome").value,
-                    sobrenome: document.querySelector(".paciente-sobrenome").value,
-                    id: document.querySelector(".paciente-id").value,
-                    contato: document.querySelector(".paciente-contato").value,
-                    idade: document.getElementById("idade").value,
-                    profissao: document.getElementById("profissao").value,
-                    avaliacao: document.getElementById("avaliacao").value,
-                    resultado: document.getElementById("resultado").value,
-                    date: document.querySelector(".date").value,
-                };
-    
-                fetch(`https://${GetParentResourceName()}/tcwz_medic:enviarLaudo`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-            });
-        }, 100);
-    }    
+    const camposComuns = `
+        <div class="linha">
+            <label>Nome:</label>
+            <div class="input-box"><input type="text" class="paciente-nome" placeholder="Nome"></div>
+            <div class="input-box"><input type="text" class="paciente-sobrenome" placeholder="Sobrenome"></div>
+        </div>
 
-    else if (tipo === 'autorizacao') {
-        container.innerHTML = `
-            <div class="laudo-documento">
-                <h2>AUTORIZAÇÃO PARA USO DE MÁSCARA</h2>
-    
-                <div class="linha">
-                    <div class="input-box"><input type="text" class="paciente-nome" placeholder="Nome"></div>
-                    <div class="input-box"><input type="text" class="paciente-sobrenome" placeholder="Sobrenome"></div>
-                </div>
-    
-                <div class="linha">
-                    <div class="input-box">
-                        <label>Passaporte:</label>
-                        <input type="text" class="paciente-id" placeholder="Ex: 111">
-                    </div>
-                    <div class="input-box">
-                        <label>Contato:</label>
-                        <input type="text" class="paciente-contato" placeholder="xxx-xxx">
-                    </div>
-                </div>
-    
-                <div class="linha">
-                    <div class="input-box">
-                        <label for="idade">Idade:</label>
-                        <input type="text" id="aut-idade" placeholder="Ex: 21">
-                    </div>
-                </div>
-    
-                <label for="diagnostico">Diagnóstico:</label>
-                <textarea id="aut-diagnostico" placeholder="Detalhes do diagnóstico..."></textarea>
-    
-                <label for="caracteristicas">Características:</label>
-                <textarea id="aut-caracteristicas" placeholder="Características da máscara ou do caso..."></textarea>
-    
-                <label for="identificacao">Identificação da Máscara:</label>
-                <input type="text" id="aut-identificacao" placeholder="ID da máscara ou nome...">
-    
-                <label for="parecer">CONCLUSÃO/PARECER CLÍNICO:</label>
-                <textarea id="aut-parecer" placeholder="Descrição do parecer clínico..."></textarea>
-    
-                <p class="assinatura">
-                    O mesmo está ciente de que este não o torna inimputável e que a remoção daquilo que o identifica: a máscara, incorre em óbito.
-                </p>
-                <label for="data">Data da Avaliação:</label>
-                <input type="text" id="data" class="date" placeholder="DD/MM/AAAA" maxlength="10">
-
-                <label for="assinatura">Assinatura:</label>
-                <input type="text" class="assinaturam" placeholder="Primeiro e Último Nome">
-    
-                <p class="assinatura">ASSINATURA MÉDICO(A) RESPONSÁVEL</p>
-    
-                <div class="botoes-final">
-                    <button class="btn-enviar" id="btn-enviar">Enviar para Análise</button>
-                    <button class="btn-cancelar" id="btn-cancelar">Cancelar</button>
-                </div>
+        <div class="linha">
+            <div class="input-box">
+                <label>Passaporte:</label>
+                <input type="text" class="paciente-id" placeholder="Ex: 111">
             </div>
-        `;
-    
-        setTimeout(() => {
-            document.getElementById("btn-enviar").addEventListener("click", () => {
-                const data = {
-                    tipo: "autorizacao",
-                    nome: document.querySelector(".paciente-nome").value,
-                    sobrenome: document.querySelector(".paciente-sobrenome").value,
-                    id: document.querySelector(".paciente-id").value,
-                    contato: document.querySelector(".paciente-contato").value,
-                    idade: document.getElementById("aut-idade").value,
-                    diagnostico: document.getElementById("aut-diagnostico").value,
-                    caracteristicas: document.getElementById("aut-caracteristicas").value,
-                    identificacao: document.getElementById("aut-identificacao").value,
-                    parecer: document.getElementById("aut-parecer").value,
-                    date: document.querySelector(".date").value,
-                    assinatura: document.querySelector(".assinaturam").value
-                };
-    
-                fetch(`https://${GetParentResourceName()}/tcwz_medic:enviarLaudo`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+            <div class="input-box">
+                <label>Contato:</label>
+                <input type="text" class="paciente-contato" placeholder="xxx-xxx">
+            </div>
+        </div>
+    `;
+
+    const campoDataAssinatura = `
+        <label for="data">Data da Avaliação:</label>
+        <input type="text" id="data" class="date" placeholder="DD/MM/AAAA" maxlength="10">
+        <label for="assinatura">Assinatura:</label>
+        <input type="text" class="assinaturam" placeholder="Primeiro e Último Nome">
+        <p class="assinatura">ASSINATURA MÉDICO(A) RESPONSÁVEL</p>
+    `;
+
+    const botoes = `
+        <div class="botoes-final">
+            <button class="btn-enviar" id="btn-enviar">Enviar para Análise</button>
+            <button class="btn-cancelar" id="btn-cancelar">Cancelar</button>
+        </div>
+    `;
+
+    let conteudoExtra = '';
+    let titulo = '';
+
+    switch (tipo) {
+        case 'psicotecnico':
+            titulo = 'Laudo Psicotécnico';
+            conteudoExtra = `
+                <div class="linha">
+                    <div class="input-box"><label>Idade:</label><input type="text" id="idade"></div>
+                    <div class="input-box"><label>Profissão:</label><input type="text" id="profissao"></div>
+                </div>
+                <label>Avaliação Psicológica:</label>
+                <textarea id="avaliacao"></textarea>
+                <label>Resultado:</label>
+                <input type="text" id="resultado">
+                <p class="assinatura">A PRESENTE AVALIAÇÃO É INTRANSFERÍVEL...</p>
+            `;
+            break;
+
+        case 'autorizacao':
+            titulo = 'Autorização para Uso de Máscara';
+            conteudoExtra = `
+                <div class="linha">
+                    <div class="input-box"><label>Idade:</label><input type="text" id="aut-idade"></div>
+                </div>
+                <label>Diagnóstico:</label><textarea id="aut-diagnostico"></textarea>
+                <label>Características:</label><textarea id="aut-caracteristicas"></textarea>
+                <label>Identificação da Máscara:</label><input type="text" id="aut-identificacao">
+                <label>Parecer Clínico:</label><textarea id="aut-parecer"></textarea>
+                <p class="assinatura">O mesmo está ciente de que...</p>
+            `;
+            break;
+
+        case 'psicologico':
+            titulo = 'Laudo Psicológico';
+            conteudoExtra = `
+                <div class="linha">
+                    <div class="input-box"><label>Idade:</label><input type="text" id="psi-idade"></div>
+                </div>
+                <label>Histórico Clínico:</label><textarea id="psi-hist_clinico"></textarea>
+                <label>Avaliação Psicológica:</label><textarea id="psi-avaliacao"></textarea>
+                <label>Recomendação e Tratamento:</label><input type="text" id="psi-recom_tratamento">
+                <label>Parecer Clínico:</label><textarea id="psi-parecer"></textarea>
+            `;
+            break;
+
+        case 'vistoria':
+            titulo = 'Formulário de Vistoria';
+            conteudoExtra = `<p>... Aqui entra o conteúdo dessa opção ...</p>`;
+            break;
+    }
+
+    container.innerHTML = `
+        <div class="laudo-documento">
+            <h2>${titulo}</h2>
+            ${tipo !== 'vistoria' ? camposComuns + conteudoExtra + campoDataAssinatura + botoes : conteudoExtra}
+        </div>
+    `;
+
+    setTimeout(() => {
+        document.getElementById("btn-enviar").addEventListener("click", () => {
+            const base = {
+                tipo,
+                nome: document.querySelector(".paciente-nome").value,
+                sobrenome: document.querySelector(".paciente-sobrenome").value,
+                id: document.querySelector(".paciente-id").value,
+                contato: document.querySelector(".paciente-contato").value,
+                date: document.querySelector(".date").value,
+            };
+
+            let extra = {};
+
+            switch (tipo) {
+                case 'psicotecnico':
+                    extra = {
+                        idade: document.getElementById("idade").value,
+                        profissao: document.getElementById("profissao").value,
+                        avaliacao: document.getElementById("avaliacao").value,
+                        resultado: document.getElementById("resultado").value,
+                    };
+                    break;
+                case 'autorizacao':
+                    extra = {
+                        idade: document.getElementById("aut-idade").value,
+                        diagnostico: document.getElementById("aut-diagnostico").value,
+                        caracteristicas: document.getElementById("aut-caracteristicas").value,
+                        identificacao: document.getElementById("aut-identificacao").value,
+                        parecer: document.getElementById("aut-parecer").value,
+                    };
+                    break;
+                case 'psicologico':
+                    extra = {
+                        idade: document.getElementById("psi-idade").value,
+                        hist_clinico: document.getElementById("psi-hist_clinico").value,
+                        avaliacao: document.getElementById("psi-avaliacao").value,
+                        recom_tratamento: document.getElementById("psi-recom_tratamento").value,
+                        parecer: document.getElementById("psi-parecer").value,
+                    };
+                    break;
+            }
+
+            fetch(`https://${GetParentResourceName()}/tcwz_medic:enviarLaudo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...base, ...extra })
             });
-        }, 100);
-    }
-    else if (tipo === 'psicologico') {
-        container.innerHTML = `<h3>Formulário Psicológico</h3><p>... Aqui entra o conteúdo dessa opção ...</p>`;
-    }
-    else if (tipo === 'vistoria') {
-        container.innerHTML = `<h3>Formulário de Vistoria</h3><p>... Aqui entra o conteúdo dessa opção ...</p>`;
-    }
+        });
+        document.getElementById("btn-cancelar").addEventListener("click", () => {
+            container.innerHTML = '';
+        });
+    }, 100);
 }
 //---------------------------------------------------//
 // CHECAR PASSAPORTE                                 //
@@ -882,7 +711,7 @@ document.querySelector('.search').addEventListener('click', function () {
     const resultadoDiv = document.getElementById('resultado-check');
 
     if (!pageContent.classList.contains('active')) return;
-    if (!passaporte) return alert("Digite um passaporte válido.");
+    if (!passaporte) return showNotification('warning', 'Preencha todos os Campos!');
 
     resultadoDiv.innerHTML = '';
 
@@ -944,7 +773,7 @@ document.querySelector("#my-test .btn-enviar").addEventListener("click", () => {
     for (let i = 1; i <= 10; i++) {
       const value = document.getElementById(`response-${i}`).value.trim();
       if (!value) {
-        showNotification('error', 'Preencha Todos os Campos!');
+        showNotification('warning', 'Preencha Todos os Campos!');
         return;
       }
       responses.push(value);

@@ -157,12 +157,12 @@ function verLaudo(register_id) {
     console.log('Laudo encontrado:', laudo);
 
     // Atualizando os valores comuns a todos os laudos
-    document.querySelector('#ver-laudo .type').innerText = laudo?.type || 'Tipo não especificado';
-    document.querySelector('#ver-laudo .register_id').innerText = laudo?.register_id || 'ID de registro não especificado';
+    document.querySelector('#ver-laudo .register_id').innerText =  laudo?.register_id || 'ID de registro não especificado';
     document.querySelector('#ver-laudo .name').innerText = laudo?.name + " " + laudo?.name2 || 'Nome não especificado';
     document.querySelector('#ver-laudo .id').innerText = laudo?.user_id || 'ID de passaporte não especificado';
     document.querySelector('#ver-laudo .age').innerText = laudo?.age || 'Idade não especificada';
     document.querySelector('#ver-laudo .phone').innerText = laudo?.contact || 'Telefone não especificado';
+    const date = document.querySelector('#ver-laudo .date-laudo');
 
     // Limpar conteúdo extra, caso haja algum valor pré-existente
     document.querySelector('.extra-fields').innerHTML = '';
@@ -173,11 +173,16 @@ function verLaudo(register_id) {
         const job = laudo?.job || 'Não especificado';
         const desc_result = laudo?.desc_result || 'Não especificado';
         const result = laudo?.result || 'Não especificado';
-
+        date.innerHTML = laudo?.date;
+        document.querySelector('#ver-laudo .type').innerText = 'Exame Psicotécnico';
         document.querySelector('#ver-laudo .extra-fields').innerHTML = `
-            <h2>Profissão: <span class="job">${job}</span></h2>
-            <h2>Descrição do Resultado: <span class="desc_result">${desc_result}</span></h2>
-            <h2>Resultado: <span class="result">${result}</span></h2>
+            <h2 style="text-align: left;">Profissão: <span class="job">${job}</span></h2>
+            <h2>Avaliação</h2>
+            <h2><span class="desc_result">${desc_result}</span></h2>
+            <h3 style="text-align: center;">O(a) candidato(a) acima relacionad(a), foi submetido(a) a avaliação psicológica e foi considerado(a):</h3>
+            <h2>Laudo conclui que o paciente esta: <span class="result">${result}</span></h2>
+            <h3 style="text-align: center;">A presente avaliação é intransferível e o mesmo segue em observação.</h3>
+            <h3 class="assinatura">Dr.(a) <span>${laudo?.signatureMedic}</span> Psicólogo(a)CCM: <span>${laudo?.medic_id}</span></h3>
         `;
     } else if (laudo?.type === 'autorizacao') {
         // Campos específicos para autorização
@@ -185,12 +190,32 @@ function verLaudo(register_id) {
         const caracteristicas = laudo?.caracteristicas || 'Não especificado';
         const identificacao = laudo?.identificacao || 'Não especificado';
         const parecer = laudo?.parecer || 'Não especificado';
-
+        const title = document.querySelector('#ver-laudo .type');
+        date.innerHTML = laudo?.date;
+        title.innerText = 'AUTORIZAÇÃO PARA USO DE MÁSCARA';
+        title.style.fontSize = '38px';
         document.querySelector('.extra-fields').innerHTML = `
-            <h2>Diagnóstico: <span class="diagnostico">${diagnostico}</span></h2>
-            <h2>Características: <span class="caracteristicas">${caracteristicas}</span></h2>
-            <h2>Identificação: <span class="identificacao">${identificacao}</span></h2>
-            <h2>Parecer: <span class="parecer">${parecer}</span></h2>
+            <h2>Diagnóstico: <br><span class="diagnostico">${diagnostico}</span></h2>
+            <h2>Características: <br><span class="caracteristicas">${caracteristicas}</span></h2>
+            <h2 style="text-align: left;">Indentificação da Máscara: <span class="identificacao">${identificacao}</span></h2>
+            <h3 style="text-align: center;">O mesmo está ciente de que este laudo não o torna inimputável e que a remoção daquilo que o identifica: a máscara, incorre em óbito.</h3>
+            <h2>Conclusão/Parecer: <br><span class="parecer">${parecer}</span></h2>
+            <h3 class="assinatura">Dr.(a) <span>${laudo?.signatureMedic}</span> Psicólogo(a)CCM: <span>${laudo?.medic_id}</span></h3>
+        `;
+    } else if (laudo?.type === 'psicologico') {
+        // Campos específicos para autorização
+        const hist_clinico = laudo?.hist_clinico || 'Não especificado';
+        const avaliacao = laudo?.avaliacao || 'Não especificado';
+        const recom_tratamento = laudo?.recom_tratamento || 'Não especificado';
+        const parecer = laudo?.parecer || 'Não especificado';
+        date.innerHTML = laudo?.date;
+        document.querySelector('#ver-laudo .type').innerText = 'LAUDO PSICOLÓGICO';
+        document.querySelector('.extra-fields').innerHTML = `
+            <h2>Histórico Clinico: <br><span class="diagnostico">${hist_clinico}</span></h2>
+            <h2>Recomendações e tratamento: <br><span class="caracteristicas">${avaliacao}</span></h2>
+            <h2>Parecer Clinico: <br><span class="identificacao">${recom_tratamento}</span></h2>
+            <h2>Conclusão/Parecer Clinico: <br><span class="parecer">${parecer}</span></h2>
+            <h3 class="assinatura">Dr.(a) <span>${laudo?.signatureMedic}</span> Psicólogo(a)CCM: <span>${laudo?.medic_id}</span></h3>
         `;
     } else {
         console.warn('Tipo de laudo desconhecido ou não especificado');
@@ -198,4 +223,103 @@ function verLaudo(register_id) {
 
     // **IMPORTANTE:** Não mexa no display da página aqui. Não deve alterar a visibilidade.
     // A visibilidade da página deve ser controlada em outro lugar.
+}
+
+function criarElemento(tag, texto = '', atributos = {}) {
+    const el = document.createElement(tag);
+    if (texto) el.textContent = texto;
+    Object.entries(atributos).forEach(([key, value]) => el.setAttribute(key, value));
+    return el;
+}
+
+function criarBotao(texto, cor, callback) {
+    const btn = document.createElement('button');
+    btn.textContent = texto;
+    btn.style.padding = '5px 10px';
+    btn.style.backgroundColor = cor;
+    btn.style.borderRadius = '5px';
+    btn.style.fontSize = '14px';
+    if (callback) btn.addEventListener('click', callback);
+    return btn;
+}
+
+function atualizarLaudosAnalise() {
+    const aLaudosDiv = document.getElementById('a-laudos');
+    aLaudosDiv.innerHTML = ''; // Limpa sempre
+
+    // Título e quantidade de laudos
+    aLaudosDiv.appendChild(criarElemento('h2', 'Laudos Análise'));
+
+    const qtdTexto = laudosAnalise.length > 0
+        ? `Tem um total de <span class="aLaudos">${laudosAnalise.length}</span> Laudos para Analisar.`
+        : 'Nenhum laudo para analisar no momento.';
+    aLaudosDiv.appendChild(criarElemento('h3', '', { innerHTML: qtdTexto }));
+
+    if (laudosAnalise.length === 0) return; // Para aqui se não tiver laudos, após atualizar info
+
+    const tabela = document.createElement('table');
+    tabela.style.width = '100%';
+    tabela.style.borderCollapse = 'collapse';
+
+    // Cabeçalho
+    const thead = document.createElement('thead');
+    const cabecalho = document.createElement('tr');
+    ['ID', 'Registro', 'Status', 'Tipo', 'Data de Emissão', 'Documento', 'Ação'].forEach(texto => {
+        cabecalho.appendChild(criarElemento('th', texto));
+    });
+    thead.appendChild(cabecalho);
+    tabela.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    laudosAnalise.forEach(laudo => {
+        const tr = document.createElement('tr');
+        tr.id = `row-${laudo.register_id}`;
+
+        ['user_id', 'register_id', 'status', 'type', 'date'].forEach(prop => {
+            tr.appendChild(criarElemento('td', laudo[prop]));
+        });
+
+        // Botão Documento
+        const tdDocumento = document.createElement('td');
+        const btnVer = criarBotao('Ver Documento', '#007BFF', () => {
+            showContent('ver-laudo', btnVer);
+            verLaudo(laudo.register_id);
+        });
+        btnVer.classList.add('btn-ver-laudo');
+        tdDocumento.appendChild(btnVer);
+        tr.appendChild(tdDocumento);
+
+        // Botões Aprovar / Recusar
+        const tdAcoes = document.createElement('td');
+        const btnAprovar = criarBotao('Aprovar', '#28a745', () => {
+            showNotification('success', 'Laudo Aprovado.');
+            document.getElementById(`row-${laudo.register_id}`)?.remove();
+            fetch(`https://${GetParentResourceName()}/tcwz_medic:aprovarLaudo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ laudo: { register_id: laudo.register_id, user_id: laudo.user_id, type: laudo.type } })
+            }).catch(err => console.error('Erro ao aprovar laudo:', err));
+        });
+
+        const btnRecusar = criarBotao('Recusar', '#dc3545', () => {
+            showNotification('error', 'Laudo Recusado.');
+            document.getElementById(`row-${laudo.register_id}`)?.remove();
+            fetch(`https://${GetParentResourceName()}/tcwz_medic:revogarLaudo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ laudo: { register_id: laudo.register_id, user_id: laudo.user_id, type: laudo.type} })
+            }).catch(err => console.error('Erro ao recusar laudo:', err));
+        });
+
+        btnAprovar.style.marginRight = '10px';
+        tdAcoes.appendChild(btnAprovar);
+        tdAcoes.appendChild(btnRecusar);
+        tr.appendChild(tdAcoes);
+
+        tbody.appendChild(tr);
+    });
+
+    tabela.appendChild(tbody);
+    aLaudosDiv.appendChild(tabela);
 }

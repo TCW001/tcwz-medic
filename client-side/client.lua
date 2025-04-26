@@ -1,101 +1,141 @@
-vRP = Proxy.getInterface("vRP")
------------------------------------------------------------------------------------------------------------------------------------------
--- CONNECTION
------------------------------------------------------------------------------------------------------------------------------------------
-cRP = {}
-Tunnel.bindInterface("tc_medic",cRP)
-vSERVER = Tunnel.getInterface("tc_medic")
------------------------------------------------------------------------------------------------------------------------------------------
--- ABRIR/FECHAR PAINEL
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("laudos:openPanel")
-AddEventHandler("laudos:openPanel", function(permiss)
+---------------------------------------------------------------------
+-- FRAMEWORK
+---------------------------------------------------------------------
+local vRP = Proxy.getInterface("vRP")
+local cRP = {}
+---------------------------------------------------------------------
+-- CONEXÃO
+---------------------------------------------------------------------
+Tunnel.bindInterface("tc_medic", cRP)
+local vSERVER = Tunnel.getInterface("tc_medic")
+---------------------------------------------------------------------
+-- ABRIR / FECHAR PAINEL
+---------------------------------------------------------------------
+RegisterNetEvent("tcwz_medic:openSystem")
+AddEventHandler("tcwz_medic:openSystem", function(user_id, identity, permission)
     local ped = PlayerPedId()
-    SetNuiFocus(true, true)
-    SendNuiMessage(json.encode({ action = "open", permiss = permiss }))
+    if not IsPedInAnyVehicle(ped) and GetEntityHealth(ped) > 0 then
+        vRP.removeObjects()
+        vRP.createObjects("amb@code_human_in_bus_passenger_idles@female@tablet@base", "base", "prop_cs_tablet", 50, 28422)
+        SetNuiFocus(true, true)
+        SendNUIMessage({
+            action = "openPanel",
+            id = user_id,
+            name = identity["name"],
+            name2 = identity["name2"],
+            phone = identity["phone"],
+            permission = permission or false
+        })
+        print(permission)
+    end
 end)
 
-RegisterNUICallback("closePanel", function(data, cb)
+RegisterNUICallback("tcwz_medic:closeSystem", function(_, cb)
     SetNuiFocus(false, false)
+    vRP.removeObjects()
     cb("ok")
 end)
------------------------------------------------------------------------------------------------------------------------------------------
--- ENVIAR DADOS DO PLAYER PARA A NUI
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("laudos:sendPlayerData")
-AddEventHandler("laudos:sendPlayerData", function(user_id, identity)
-    SendNuiMessage(json.encode({ 
-        action = "updateTable", 
-        id = user_id, 
-        name = identity["name"], 
-        lastName = identity["name2"]
-    }))
-end)
------------------------------------------------------------------------------------------------------------------------------------------
--- CHECAR OS DADOS DA EMISSÃO DO LAUDO
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNUICallback("laudo:sendDataServer", function(data, cb)
-    local dados = data.dados
-
-    TriggerServerEvent('laudo:receiveDataServer', dados)
-    cb({ status = "ok" })
-end)
------------------------------------------------------------------------------------------------------------------------------------------
--- CHECAR OS DADOS DA EMISSÃO DO LAUDO
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("laudo:sendCheckData")
-AddEventHandler("laudo:sendCheckData", function(checkData) 
-    print(checkData)
-    SendNuiMessage(json.encode({
-        checkDataNUI = checkData
-    }))
-end)
------------------------------------------------------------------------------------------------------------------------------------------
--- ENVIO DOS LAUDOS EM ANALISE PARA A NUI
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNetEvent("laudo:receiveAllPending")
-AddEventHandler("laudo:receiveAllPending", function(result)
-    SendNUIMessage({
-        action = "renderLaudos",
-        result = result,
-        permiss = "Paramedic"
-    })
-end)
------------------------------------------------------------------------------------------------------------------------------------------
--- APROVAR E RECUSAR LAUDO ENVIAR PARA SERVER
------------------------------------------------------------------------------------------------------------------------------------------
-RegisterNUICallback("aprovarLaudo", function(data, cb)
-    local register_id = data.register_id
-    print(register_id)
-    TriggerServerEvent("laudo:aprovarLaudo", register_id)
-    cb({})
+---------------------------------------------------------------------
+-- LAUDOS
+---------------------------------------------------------------------
+RegisterNetEvent("tcwz_medic:sendLaudosAprovados")
+AddEventHandler("tcwz_medic:sendLaudosAprovados", function(myLaudos)
+    SendNUIMessage({ action = "receiveLaudosAprovados", myLaudos = myLaudos })
 end)
 
-RegisterNUICallback("recusarLaudo", function(data, cb)
-    local register_id = data.register_id
-    TriggerServerEvent("laudo:recusarLaudo", register_id)
-    cb({})
+RegisterNetEvent("tcwz_medic:sendLaudosAnalise")
+AddEventHandler("tcwz_medic:sendLaudosAnalise", function(analiseLaudos)
+    SendNUIMessage({ action = "receiveLaudosAnalise", analiseLaudos = analiseLaudos })
 end)
 
-RegisterNetEvent("laudo:receiveMyLaudos")
-AddEventHandler("laudo:receiveMyLaudos", function(result)
-    SendNUIMessage({
-        action = "renderMyLaudos",
-        result2 = result,
-        permiss = "Paramedic"
-    })
-end)
-
-RegisterNUICallback("buscarPorPassaporte", function(data, cb)
-    local user_id = tonumber(data.user_id)
-    TriggerServerEvent("tcwz:buscarPassaporteServer", user_id)
+RegisterNUICallback("tcwz_medic:aprovarLaudo", function(data, cb)
+    print(data.laudo.type)
+    TriggerServerEvent("tcwz_medic:aprovarLaudoSQL", data)
     cb("ok")
 end)
 
-RegisterNetEvent("tcwz:renderPassaporte")
-AddEventHandler("tcwz:renderPassaporte", function(result)
-    SendNUIMessage({
-        action = "renderPassaporte",
-        result3 = result
-    })
+RegisterNUICallback("tcwz_medic:revogarLaudo", function(data, cb)
+    print(data.laudo.register_id, data.laudo.user_id)
+    print(data.laudo.type)
+    TriggerServerEvent("tcwz_medic:revogarLaudoSQL", data)
+    cb("ok")
+end)
+---------------------------------------------------------------------
+-- CONSULTA
+---------------------------------------------------------------------
+RegisterNUICallback("tcwz_medic:submitConsulta", function(data, cb)
+    TriggerServerEvent("tcwz_medic:sendConsultaToServer", data)
+    cb("ok")
+end)
+RegisterNetEvent("tcwz_medic:receiveConsultaPedido")
+AddEventHandler("tcwz_medic:receiveConsultaPedido", function(consultaInfo)
+    SendNUIMessage({ action = "newConsulta", consultaInfo = consultaInfo })
+end)
+
+RegisterNUICallback("tcwz_medic:statusConsulta", function(data, cb)
+    TriggerServerEvent("tcwz_medic:sendToClientConsultaStatus", data)
+    cb("ok")
+end)
+
+RegisterNetEvent("tcwz_medic:sendStatusConsulta")
+AddEventHandler("tcwz_medic:sendStatusConsulta", function(status, tipo, date)
+    SendNUIMessage({ action = "statusConsulta", status = status, tipo = tipo, date = date })
+end)
+RegisterNetEvent("tcwz_medic:delPedido") -- so quero apagar o pedido de consulta apos aprovar/recusar para todos os medicos em serviço... ou 15 medicos ON ? 15 Aprovações kkk
+AddEventHandler("tcwz_medic:delPedido", function()
+    SendNUIMessage({ action = "delPedido" })
+end)
+---------------------------------------------------------------------
+-- LAUDO: ENVIAR PARA CHECAR
+---------------------------------------------------------------------
+RegisterNUICallback("tcwz_medic:enviarLaudo", function(data, cb)
+    if data.tipo == "psicotecnico" or data.tipo == "autorizacao" or data.tipo == "psicologico" then
+        TriggerServerEvent("tcwz_medic:checkLaudo", data)
+    end
+    cb("ok")
+end)
+
+RegisterNetEvent("tcwz_medic:checkDataLaudo")
+AddEventHandler("tcwz_medic:checkDataLaudo", function(laudoData)
+    SendNUIMessage({ laudoData = laudoData })
+end)
+---------------------------------------------------------------------
+-- CHECAR LAUDOS DE OUTRO ID
+---------------------------------------------------------------------
+RegisterNUICallback("tcwz_medic:checkID", function(id, cb)
+    TriggerServerEvent("tcwz_medic:checkIDserver", id)
+    cb("ok")
+end)
+
+RegisterNetEvent("tcwz_medic:sendCheckID")
+AddEventHandler("tcwz_medic:sendCheckID", function(id, identity, laudos)
+    SendNUIMessage({ action = "resultCheckID", id = id, identity = identity, laudos = laudos })
+end)
+---------------------------------------------------------------------
+-- ENVIAR O TESTE PARA ID CORRETO
+---------------------------------------------------------------------
+RegisterNUICallback("tcwz_medic:sendTestID", function(target_id, cb)
+    TriggerServerEvent("tcwz_medic:sendTestIDServer", target_id)
+    cb("ok")
+end)
+
+RegisterNetEvent("tcwz_medic:sendTestPSI")
+AddEventHandler("tcwz_medic:sendTestPSI", function(medic_id, medic_identity)
+    SendNUIMessage({ action = "testePSI", id = medic_id, medic_identity = medic_identity })
+end)
+-- RECEBER O TESTE QUE O PACIENTE FEZ E ENVIAR PARA O MEDICO!
+RegisterNUICallback("tcwz_medic:sendTestMedic", function(data, cb)
+    print("ID do médico:", data.id)
+    
+    print("Respostas:")
+    for i, resposta in ipairs(data.responses) do
+        print(i, resposta)
+    end
+    TriggerServerEvent("tcwz_medic:sendTestServer", data.id, data.responses)
+    cb("ok")
+end)
+
+RegisterNetEvent("tcwz_medic:sendTestMedic")
+AddEventHandler("tcwz_medic:sendTestMedic", function(test_id, test_identity, responses)
+    SendNUIMessage({ action = "testeToMedic", id = test_id, test_identity =  test_identity, responses = responses })
 end)

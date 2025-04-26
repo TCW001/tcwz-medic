@@ -1,377 +1,219 @@
-  <html>
-  <head>
-      <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-      <div id="container">
-          <div class="top-bar">
-              <div class="logo-container">
-                  <img src="images/logo_cus.PNG" alt="logo_cus" class="logo">
-                  <span id="title" class="logo-text">CUS | Funcionário</span>
-              </div>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css"> <!-- LINK CSS -->
+    </head>
+    <body>
+        <div id="panel-container"> <!-- PAINEL (irei desativar através do BODY) -->
+            <div class="top-bar"> <!-- TOPO DO PAINEL -->
+                <div class="title">
+                    <img src="images/logo_cus.png" alt="logo-cus" class="logo">
+                    <h1 id="title" class="panel-title">CUS <span id="permission">Permission</span></h1>
+                </div>
+
+                <button id="btn-close" onclick="closePanel()">
+                    <img src="images/x-circle.svg" alt="" width="auto" height="25" style="vertical-align: middle; margin-right: 2px;">
+                </button>
+
+                <div id="notify"></div>
+            </div>
+
+            <div class="panel-main-content">
+                <div class="panel-sidebar">
+                    <button class="sidebar-btn active" onclick="showContent('info', this)"><img src="images/list-bullet.svg" height="25"> Informação</button>
+                    <button class="sidebar-btn" onclick="showContent('s-consulta', this)"><img src="images/envelope-open.svg" height="25"> Solicitar Consulta</button>
+                    <button id="Medic" class="sidebar-btn" onclick="showContent('p-consulta', this)"><img src="images/envelope.svg" height="25"> Pedidos de Consulta</button>
+                    <button id="Medic2" class="sidebar-btn" onclick="showContent('send-test', this)"><img src="images/cube.svg" height="25"> Teste Psicológico</button>
+                    <button id="Medic3" class="sidebar-btn" onclick="showContent('e-laudos', this)"><img src="images/document-plus.svg" height="25"> Emitir Laudo</button>
+                    <button id="Diretor" class="sidebar-btn" onclick="showContent('a-laudos', this)"><img src="images/document-check.svg" height="25"> Laudos Análise</button>
+                    <button class="sidebar-btn" onclick="showContent('my-laudos', this)"><img src="images/bookmark.svg" height="25"> Meus Laudos</button>
+                    <button id="Police" class="sidebar-btn" onclick="showContent('check-id', this)"><img src="images/identification.svg" height="25"> Checar Passaporte</button>
+                    <button id="t-Teste" class="sidebar-btn" onclick="showContent('my-test', this)" style="display: none;"><img src="images/envelope.svg" height="25"> Teste [ID]: <span class="id">id</span></button>
+                </div>
               
-              <button class="btn-fechar" onclick="fecharPainel()">Sair</button>
-          </div>
-          
-          <div class="main-content">
-              <div class="sidebar">
-                  <button class="active" onclick="showContent('informacao')">Informação</button>
-                  <button onclick="showContent('solicitarConsulta')">Solicitar Consulta</button>
-                  <button id="medic" onclick="showContent('consultas')">Pedidos de Consulta</button>
-                  <button id="medic1" onclick="showContent('emitirLaudo')">Emitir Laudo</button>
-                  <button id="staff" onclick="showContent('aprovarLaudo')">Laudos Análise</button>
-                  <button onclick="showContent('meusLaudos')">Meus Laudos</button>
-                  <button id="checkID" onclick="showContent('passaporte')">Checar Passaporte</button>
-              </div>
-          
-              <div class="content">
-                  <div id="informacao" class="content-box active">
-                      <h2>Informações Gerais</h2>
-                      <p>Bem-vindo ao <span>CUS</span>! Use o Menu Lateral à sua Necessidade.</p>
-                      <p><span>Solicitar Consulta</span>-> Solicite a sua Consulta! Lembre-se que nem sempre tem um Especialista Disponível!</p>
-                      <table>
-                          <thead>
-                          <tr>
-                              <th>Nome</th>
-                              <th>Sobrenome</th>
-                              <th>Passaporte</th>
-                              <th>Meus Laudos</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
-                              <td id="Name">Nome</td>
-                              <td id="lastName">Sobrenome</td>
-                              <td id="id">Passaporte</td>
-                              <td>
-                                  <button class="btn-confirmar" onclick="showContent('meusLaudos')">Meus Laudos</button>
-                              </td>
-                          </tr>
-                          </tbody>
-                      </table>
-                      <br>
-                      <h2>Minhas Consultas</h2>
-                      <table id="minhasConsultas">
-                          <thead>
-                              <tr>
-                                  <th>Tipo</th>
-                                  <th>Data</th>
-                                  <th>Hora</th>
-                                  <th>Descrição</th>
-                                  <th>Status</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <!-- Histórico de consultas será adicionado aqui -->
-                          </tbody>
-                      </table>
-                  </div>
-
-                  <div id="solicitarConsulta" class="content-box">
-                      <h2>Solicitar Consulta</h2>
-
-                      <div class="dropdown">
-                          <p>Tipo:</p>
-                          <button id="dropdownButton" class="dropbtn">Selecione</button>
-                          <div class="dropdown-content">
-                              <div onclick="selectOption('Laudo')">Laudo</div>
-                              <div onclick="selectOption('Psicotécnico')">Psicotécnico</div>
-                              <div onclick="selectOption('Consulta')">Consulta</div>
-                          </div>
-                      </div>
-                      
-                      <p>Data:</p>
-                      <input type="date" id="dataInput">
-                      <p>Hora:</p>
-                      <input type="time" id="horaInput">
-
-                      <form>
-                          <label>Oi, <span id="Name2">Nome</span>!</label>
-          
-                          <label for="descricao">Escreva com detalhes do que necessita:</label>
-                          <textarea id="descricao" name="descricao" rows="5"></textarea>
-          
-                          <button type="button" id="btnSolicitar" class="btn-primary">Solicitar</button>
-                      </form>
-                  </div>
-          
-                  <div id="consultas" class="content-box">
-                      <h2>Pedidos de Consulta</h2>
-                      <table id="pedidosConsulta">
-                          <thead>
-                              <tr>
-                                  <th>Nome</th>
-                                  <th>Passaporte</th>
-                                  <th>Tipo</th>
-                                  <th>Data</th>
-                                  <th>Hora</th>
-                                  <th>Descrição</th>
-                                  <th>Status</th>
-                                  <th>Ações</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <!-- Linhas de consulta serão adicionadas aqui dinamicamente -->
-                          </tbody>    
-                      </table>
-
-                      <br><br>
-
-                      <h2>Histórico de Consultas</h2>
-                      <table id="historicoConsulta">
-                          <thead>
-                              <tr>
-                                  <th>Nome</th>
-                                  <th>Passaporte</th>
-                                  <th>Tipo</th>
-                                  <th>Data</th>
-                                  <th>Hora</th>
-                                  <th>Descrição</th>
-                                  <th>Status</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <!-- Histórico de consultas será adicionado aqui -->
-                          </tbody>
-                      </table>
-                  </div>
-          
-                  <div id="emitirLaudo" class="content-box">
-                      <div class="form-box">
-                        <div class="laudo-section">
-                          <label for="exame">Exame:</label>
-                          <select id="exame">
-                            <option>Psicotécnico</option>
-                            <option>Capacidade Física</option>
-                            <option>Clínico Geral</option>
-                          </select>
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <h2>Informações do Avaliado</h2>
-                          <label for="paciente">Paciente:</label>
-                          <div class="input-duplo">
-                            <input type="text" id="paciente" placeholder="Nome">
-                            <input type="text" id="paciente2" placeholder="Sobrenome">
-                          </div>
-                    
-                          <div class="laudo-row">
-                            <div class="input-group">
-                              <label for="idade">Idade:</label>
-                              <input type="text" id="idade">
-                            </div>
-                    
-                            <div class="input-group">
-                              <label for="rg">RG:</label>
-                              <input type="text" id="rg">
-                            </div>
-                          </div>
-                    
-                          <div class="input-duplo">
-                            <div class="input-group">
-                              <label for="contato">Contacto:</label>
-                              <input type="text" id="contato">
-                            </div>
-                    
-                            <div class="input-group">
-                              <label for="profissao">Profissão:</label>
-                              <input type="text" id="profissao">
-                            </div>
-                          </div>
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <h2>Avaliação</h2>
-                          <textarea id="avaliacao" rows="5" placeholder="Descrição da avaliação..."></textarea>
-                        </div>
-                    
-                        <div class="laudo-section centered">
-                          <p>O (A) CANDIDATO (A) ACIMA RELACIONADO(A), FOI SUBMETIDO(A) A AVALIAÇÃO PSICOLÓGICA E FOI CONSIDERADO(A):</p>
-                        </div>
-                    
-                        <div class="laudo-linha-horizontal">
-                          <label class="laudo-texto" for="resultado">LAUDO CONCLUI QUE O PACIENTE ESTÁ:</label>
-                          <input type="text" id="resultado" placeholder="Resultado da avaliação">
-                        </div>
-                    
-                        <div class="laudo-section centered">
-                          <p>A PRESENTE AVALIAÇÃO É INTRANSFERÍVEL. O MESMO SEGUE EM OBSERVAÇÃO.</p>
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <label for="data">Coordenação Única de Saúde da Capital:</label>
-                          <input type="date" id="data">
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <label for="ccm">Psicólogo(a) CCM:</label>
-                          <input type="text" id="ccm">
-                        </div>
-                    
-                        <div class="laudo-section" style="text-align: center;">
-                          <p>ASSINATURA MÉDICO(A) RESPONSÁVEL</p>
-                        </div>
-                    
-                        <!-- Botões no final -->
-                        <div class="laudo-section botoes-final">
-                          <button type="button" id="btn-enviar" class="btn-enviar">Enviar para Análise</button>
-                          <button type="button" id="btn-cancelar" class="btn-cancelar">Cancelar</button>
-                        </div>
-                      </div>
-                    </div>                                  
-
-                  <div id="aprovarLaudo" class="content-box">
-                      <h2>Meus Laudos</h2>
-                      <table>
-                          <thead>
-                          <tr>
-                              <th>ID de Registro</th>
-                              <th>Passaporte</th>
-                              <th>Nome</th>
-                              <th>Tipo de Laudo</th>
-                              <th>Data de Emissão</th>
-                              <th>Status</th>
-                              <th>MÉDICO ID</th>
-                              <th>Documento</th>
-                              <th>Confirmação</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
+                <div class="panel-pagecontent"> <!-- PAGINAS DE CONTEUDO -->
+                    <!-- PAGE INFORMACOES -->
+                    <div id="info" class="page-content active">
+                        <h2>Informações</h2>
+                        <h3>OI, <span class="name">NAME</span>!</h3>
+                        <h3>Bem-vindo ao Painel do <span>CUS</span>! Use o Menu lateral à sua Necessidade</h3>
+                        <p><span>Ver meus Laudos:</span>  Aqui você vai direto para a secção que contém todos os seus Laudos.</p>
+                        <p><span>Solicitações de Consultas:</span>  Aqui você vê as solicitações de você efetuou.</p>
+                        <div class="info-box">
+                            <h3>Nome: <span class="name">NAME</span></h3>
+                            <h3>Passaporte: <span class="id">ID</span></h3>
+                            <h3>Telefone: <span class="phone">PHONE</span></h3>
+                            <h3>Quantidade de Laudos: <span class="qLaudos">Q-LAUDOS</span></h3>
                             
-                          </tr>
-                          </tbody>
-                      </table>
-                  </div>
-
-                  <div id="meusLaudos" class="content-box">
-                      <h2>Meus Laudos</h2>
-                      <table>
-                          <thead>
-                          <tr>
-                              <th>ID de Registro</th>
-                              <th>Tipo de Laudo</th>
-                              <th>Data de Emissão</th>
-                              <th>Documento</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
-                          </tr>
-                          </tbody>
-                      </table>
-                  </div>
-          
-                  <div id="passaporte" class="content-box">
-                    <h2>Checar Passaporte</h2>
-                    
-                    <form id="buscarPassaporteForm">
-                      <label for="passaporteInput">Número do Passaporte:</label>
-                      <input type="text" id="passaporteInput" name="passaporte">
-                      <button type="submit" class="btn-primary">Buscar</button>
-                    </form>
-                  
-                    <!-- Div para informações do passaporte, inicialmente oculta -->
-                    <div id="infoPassaporte" style="margin-top: 20px; display: none;">
-                      <p><strong>Nome:</strong> <span id="nomePassaporte">-</span></p>
-                      <p><strong>ID:</strong> <span id="idPassaporte">-</span></p>
-                      <p><strong>Quantidade de Laudos:</strong> <span id="quantidadeLaudos">-</span></p>
+                            <div class="button-container">
+                                <button class="sidebar-btn" onclick="showContent('my-laudos', this)"><img src="images/bookmark.svg" height="25"> Ver meus Laudos</button>
+                                <button class="sidebar-btn" onclick="showContent('ms-consulta', this)"><img src="images/document-plus.svg" height="25"> Solicitações de Consultas</button>
+                            </div>
+                        </div>
                     </div>
-                  
-                    <!-- Tabela com os laudos, inicialmente oculta -->
-                    <table id="tabelaLaudosPassaporte" style="margin-top: 10px; display: none;">
-                      <thead>
-                        <tr>
-                          <th>ID de Registro</th>
-                          <th>Tipo de Laudo</th>
-                          <th>Data</th>
-                          <th>Documento</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <!-- Linhas dos laudos vão aqui -->
-                      </tbody>
-                    </table>
-                  </div>
-                  
+                    <!-- PAGE SOLICITAR CONSULTA -->
+                    <div id="s-consulta" class="page-content">
+                        <h2>Solicitar Consulta</h2>
+                        <form>
+                            <div class="form-row">
+                                <h3>Tipo de Consulta:</h3>
+                                <select id="typeConsulta">
+                                    <option>Psicotécnico</option>
+                                    <option>Capacidade Física</option>
+                                    <option>Clínico Geral</option>
+                                </select>
+                            </div>
+                    
+                            <div class="form-row duo">
+                                <div>
+                                    <h3>Data Desejada:</h3>
+                                    <input type="text" id="data" placeholder="DD/MM/AAAA" maxlength="10">
+                                </div>
+                                <div>
+                                    <h3>Hora Desejada:</h3>
+                                    <input type="text" id="time" placeholder="HH:MM" maxlength="5"/>
+                                </div>
+                            </div>
+                    
+                            <h3>Escreva com detalhes do que necessita.</h3>
+                            <textarea id="desc" name="descricao" rows="1" maxlength="250"></textarea>
+                    
+                            <button type="submit" onclick="showNotification('success', 'Consulta Solicitada!')">Solicitar</button>
+                        </form>
+                    </div>
+                    <!-- PAGE SOLICITAÇÕES DE CONSULTAS -->
+                    <div id="ms-consulta" class="page-content"></div>
+                    <!-- PAGE PEDIDOS DE CONSULTAS -->
+                    <div id="p-consulta" class="page-content">
+                        <h2>Pedidos de Consulta</h2>
+                    </div>
+                    <!-- PAGE EMITIR LAUDO -->
+                    <div id="e-laudos" class="page-content">
+                        <h2>Emitir Laudo</h2>
+                        <div class="select">
+                            <h3>Tipo de Laudo:</h3>
+                            <select id="typeLaudo" onchange="handleLaudoChange(this.value)">
+                                <option value="">Selecione</option>
+                                <option value="psicotecnico">Psicotécnico</option>
+                                <option value="autorizacao">Autorização Máscara</option>
+                                <option value="psicologico">Psicológico</option>
+                                <option value="vistoria">Vistoria</option>
+                            </select>
+                        </div>
+                    
+                        <div id="laudo-container" style="margin-top: 20px;"></div>
+                    </div>
+                    <!-- PAGE LAUDOS ANALISE -->
+                    <div id="a-laudos" class="page-content">
+                        <h2>Laudos em Análise</h2>
+                        <h3>Não tem nenhum Laudo para você Analisar.</h3>
+                    </div>
+                    <!-- PAGE MEUS LAUDOS -->
+                    <div id="my-laudos" class="page-content">
+                        <h2>Meus Laudos</h2>
+                        <h3>Parece que você não tem nenhum Laudo!</h3>
+                        <p>Vá ao Hospital e peça um <span>Laudo</span>!</p>
+                    </div>
+                    <!-- PAGE CHECAR PASSAPORTE -->
+                    <div id="check-id" class="page-content">
+                        <h2>Checar Passaporte</h2>
+                        <h3>Coloque o <span>Passaporte</span> que você quer checar.</h3>
+                        <input type="text" class="checkPassaporte" placeholder="Passaporte">
+                        <button type="button" class="search">Buscar</button>
 
-                  <div id="laudo" class="content-box">
-                      <div class="form-box">
-                        <div class="laudo-section">
-                          <h1>Exame:</h1>
-                          <h2 id="type">Tipo</h2>
-                          
+                        <div id="resultado-check"></div>
+                    </div>
+                    <!-- PAGE VER DOCUMENTO -->
+                    <div id="ver-laudo" class="page-content">
+                        <h2 class="type">titulo</h2>
+                        <img src="images/cus_logo_laudo.png" alt="logo-cus" class="logo">
+                        <div class="header-info">
+                            <h3 class="id-right">ID de Registro: <span class="register_id">register_id</span></h3>
+                            <h3 class="date-info">Data de Emissão: <span class="date-laudo">date</span></h3>
                         </div>
-                    
-                        <div class="laudo-section">
-                          <h1>Informações do Avaliado</h1>
-                          <h2>Paciente:</h2>
-                          <h2 id="name">Sobrenome</h2>
-                    
-                          <div class="laudo-row">
-                            <div class="input-group">
-                              <h2>Idade:</h2>
-                              <h2 id="age">age</h2>
+                        <div class="flex-row">
+                            <h3>Nome: <span class="name">name</span></h3>
+                            <h3>Passaporte: <span class="id">id</span></h3>
+                        </div>
+                        <div class="flex-row">
+                            <h3>Idade: <span class="age">age</span></h3>
+                            <h3>Telefone: <span class="phone">telefone</span></h3>
+                        </div>
+                        <div class="extra-fields"></div>
+                        <div class="logo-capital">
+                            <img src="images/logocapital.png" alt="logo-cus" class="logo-capital">
+                            <h1>Capital City</h1>
+                        </div>
+                    </div>
+
+                    <div id="send-test" class="page-content">
+                        <h2>Enviar Teste Psicológico</h2>
+                        <h3>Envie um Teste Psicológico para o <span>Passaporte</span> desejado.</h3>
+                        <p>Após enviar, aguarde o Paciente <span>realizar o teste</span>.</p>
+                        <input type="text" id="targetID" placeholder="Passaporte" style="margin-bottom: 20px;">
+                        <button type="button" class="btn-enviar">Enviar</button>
+                        <br>
+                        <br>
+                        <div id="questions" style="display: none;"></div>
+                    </div>
+
+                    <div id="my-test" class="page-content">
+                        <h2>Meu Teste Psicológico</h2>
+                        <h3>Responda às perguntas com <span>sinceridade</span>!</h3>
+                        <p>Após responder a todas as perguntas, <span>envie para o Médico</span>.</p>
+                        <br>
+                        <p>Informações do Médico que lhe enviou o teste.</p>
+                        <h3>Médico: <span class="medic-name">nome</span></h3>
+                        <h3>Passaporte: <span class="medic-id">id</span></h3>
+                        <h3>Telefone: <span class="medic-phone">phone</span></h3>
+                        <br>
+                        <div class="questions-container">
+                            <div class="question-block">
+                              <h3 id="question-1">Pergunta 1</h3>
+                              <input type="text" id="response-1" placeholder="Resposta 1">
                             </div>
-                    
-                            <div class="input-group">
-                              <h2>RG:</h2>
-                              <h2 id="user_id">id</h2>
+                            <div class="question-block">
+                              <h3 id="question-2">Pergunta 2</h3>
+                              <input type="text" id="response-2" placeholder="Resposta 2">
                             </div>
-                          </div>
-                    
-                          <div class="input-duplo">
-                            <div class="input-group">
-                              <h2>Contacto:</h2>
-                              <h2 id="phone">phone</h2>
+                            <div class="question-block">
+                                <h3 id="question-1">Pergunta 3</h3>
+                                <input type="text" id="response-3" placeholder="Resposta 3">
+                              </div>
+                              <div class="question-block">
+                                <h3 id="question-2">Pergunta 4</h3>
+                                <input type="text" id="response-4" placeholder="Resposta 4">
                             </div>
-                    
-                            <div class="input-group">
-                              <h2>Profissão:</h2>
-                              <h2 id="job">job</h2>
+                            <div class="question-block">
+                                <h3 id="question-1">Pergunta 5</h3>
+                                <input type="text" id="response-5" placeholder="Resposta 5">
+                              </div>
+                              <div class="question-block">
+                                <h3 id="question-2">Pergunta 6</h3>
+                                <input type="text" id="response-6" placeholder="Resposta 6">
                             </div>
-                          </div>
+                            <div class="question-block">
+                                <h3 id="question-1">Pergunta 7</h3>
+                                <input type="text" id="response-7" placeholder="Resposta 7">
+                              </div>
+                              <div class="question-block">
+                                <h3 id="question-2">Pergunta 8</h3>
+                                <input type="text" id="response-8" placeholder="Resposta 8">
+                            </div>
+                            <div class="question-block">
+                                <h3 id="question-1">Pergunta 9</h3>
+                                <input type="text" id="response-9" placeholder="Resposta 9">
+                              </div>
+                              <div class="question-block">
+                                <h3 id="question-2">Pergunta 10</h3>
+                                <input type="text" id="response-10" placeholder="Resposta 10">
+                            </div>
+                            <button type="button" class="btn-enviar">Enviar</button>
                         </div>
-                    
-                        <div class="laudo-section">
-                          <h2>Avaliação:</h2>
-                          <h2 id="desc_avaliacao">desc. avaliacao</h2>
-                        </div>
-                    
-                        <div class="laudo-section centered">
-                          <p>O (A) CANDIDATO (A) ACIMA RELACIONADO(A), FOI SUBMETIDO(A) A AVALIAÇÃO PSICOLÓGICA E FOI CONSIDERADO(A):</p>
-                        </div>
-                    
-                        <div class="laudo-linha-horizontal">
-                          <h2>LAUDO CONCLUI QUE O PACIENTE ESTÁ:</h2>
-                          <h2 id="result">result</h2>
-                        </div>
-                    
-                        <div class="laudo-section centered">
-                          <p>A PRESENTE AVALIAÇÃO É INTRANSFERÍVEL. O MESMO SEGUE EM OBSERVAÇÃO.</p>
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <h2>Coordenação Única de Saúde da Capital:</h2>
-                          <h2 id="date">data</h2>
-                        </div>
-                    
-                        <div class="laudo-section">
-                          <h2>Psicólogo(a) CCM:</h2>
-                          <h2 id="medicSignature">medic</h2>
-                          <h2>Registro:</h2>
-                          <h2 id="register">id</h2>
-                        </div>
-                    
-                        <div class="laudo-section" style="text-align: center;">
-                          <p>ASSINATURA MÉDICO(A) RESPONSÁVEL</p>
-                        </div>
-                      </div>
-                    </div> 
-              </div>
-          </div>
-      </div>
-      
-      <script src="script.js"></script>
-  </body>
-  </html>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="uiHandler.js"></script>
+        <script src="clientCOMM.js"></script>
+    </body>
+</html>
